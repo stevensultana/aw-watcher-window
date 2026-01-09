@@ -37,6 +37,7 @@ def get_current_window_macos(strategy: str) -> Optional[dict]:
 
 def get_current_window_windows() -> Optional[dict]:
     from . import windows
+    from . import windows_outlook
 
     window_handle = windows.get_active_window_handle()
 
@@ -66,6 +67,10 @@ def get_current_window_windows() -> Optional[dict]:
             pass
 
     title = windows.get_window_title(window_handle)
+
+    if app and app.lower() == "outlook.exe" and "Outlook" in title:
+        outlook_selection = windows_outlook.get_outlook_activity()
+        title = outlook_selection.get("title", title)
 
     if app is None:
         app = "unknown"
