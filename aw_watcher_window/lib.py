@@ -37,15 +37,34 @@ def get_current_window_macos(strategy: str) -> Optional[dict]:
 
 def get_current_window_windows() -> Optional[dict]:
     from . import windows
+    from . import windows_outlook
+    import pywintypes
+    import wmi
 
     window_handle = windows.get_active_window_handle()
+    if window_handle == 0:
+        return None
+        # c = wmi.WMI()
+        # for process in c.Win32_Process(name="consent.exe"):
+        #     return {"app": "consent.exe", "title": "UAC"}
+        # for process in c.Win32_Process(name="logonui.exe"):
+        #     return {"app": "logonUI.exe", "title": "Logon Screen"}
+        # return {"app": "unknown", "title": "unknown"}
+
     try:
         app = windows.get_app_name(window_handle)
-    except Exception:  # TODO: narrow down the exception
+    except pywintypes.error as e:
         # try with wmi method
-        app = windows.get_app_name_wmi(window_handle)
+        if e.winerror == 5:  # Access is denied
+            app = windows.get_app_name_wmi(window_handle)
+        else:
+            raise e
 
     title = windows.get_window_title(window_handle)
+
+    if app.lower() == "outlook.exe" and " - ssultana@computime.com.mt - Outlook" in title:
+        outlook_selection = windows_outlook.get_outlook_activity()
+        title = outlook_selection.get("title", title)
 
     if app is None:
         app = "unknown"
