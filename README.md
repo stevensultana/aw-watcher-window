@@ -20,6 +20,12 @@ To install from a cloned version, cd into the directory and run
 If you want to install it system-wide it can be installed with `pip install .`, but that has the issue
 that it might not get the exact version of the dependencies due to not reading the poetry.lock file.
 
+### To build manually
+- `pip install aw-core aw-client pywin32 wmi pyinstaller`
+- Make your changes.
+- `pyinstaller .\aw-watcher-window.spec --clean --noconfirm`
+- Copy the folder in `dist` to `C:\Users\USERNAME\AppData\Local\Programs\ActivityWatch\`
+
 ## Usage
 
 In order for this watcher to be available in the UI, you'll need to have a Away From Computer (afk) watcher running alongside it.
